@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -12,11 +11,17 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var tpl = template.Must(template.ParseFiles("index.html"))
 var APIurl string = "https://api.thecatapi.com/v1/images/search"
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	tpl.Execute(w, nil)
+type catPicAndQuote struct {
+	CatPic string
+	Quote  string
+}
+
+func catQuoteHandler(w http.ResponseWriter, r *http.Request) {
+	c := catPicAndQuote{CatPic: string(catPicURL()), Quote: "placeholder"}
+	t, _ := template.ParseFiles("catQuote.html")
+	t.Execute(w, c)
 }
 
 func extractHTMLbody(url string) []byte {
@@ -53,7 +58,6 @@ func catPicURL() []byte {
 }
 
 func main() {
-	fmt.Print(string(catPicURL()))
 
 	err := godotenv.Load()
 	if err != nil {
@@ -67,6 +71,6 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", indexHandler)
+	mux.HandleFunc("/", catQuoteHandler)
 	http.ListenAndServe(":"+port, mux)
 }
