@@ -12,6 +12,7 @@ import (
 )
 
 var CatPicAPI_URL string = "https://api.thecatapi.com/v1/images/search"
+var QuoteAPI_URL string = "https://api.quotable.io/random"
 
 type CatPicAndQuote struct {
 	CatPic string
@@ -24,8 +25,22 @@ type CatPicAPI struct {
 	Width  int    `json:"width"`
 	Height int    `json:"height"`
 }
+
+type QuoteAPI struct {
+	ID           string `json:"_id"`
+	Content      string `json:"content"`
+	Author       string `json:"author"`
+	Tags         string `json:"tags"`
+	AuthorSlug   string `json:"length"`
+	DateAdded    string `json:"dateAdded"`
+	DateModified string `json:"dateModified"`
+}
+
 func catQuoteHandler(w http.ResponseWriter, r *http.Request) {
-	c := catPicAndQuote{CatPic: string(catPicURL()), Quote: "placeholder"}
+	var quote QuoteAPI
+	json.Unmarshal(extractHTMLbody(QuoteAPI_URL), &quote)
+
+	c := CatPicAndQuote{CatPic: string(catPicURL()), Quote: "\"" + quote.Content + "\"" + " ~ " + quote.Author}
 	t, _ := template.ParseFiles("catQuote.html")
 	t.Execute(w, c)
 }
