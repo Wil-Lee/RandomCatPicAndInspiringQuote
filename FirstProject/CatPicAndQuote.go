@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bytes"
+	"encoding/json"
 	"html/template"
 	"io"
 	"log"
@@ -11,13 +11,19 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var APIurl string = "https://api.thecatapi.com/v1/images/search"
+var CatPicAPI_URL string = "https://api.thecatapi.com/v1/images/search"
 
-type catPicAndQuote struct {
+type CatPicAndQuote struct {
 	CatPic string
 	Quote  string
 }
 
+type CatPicAPI struct {
+	ID     string `json:"id"`
+	URL    string `json:"url"`
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+}
 func catQuoteHandler(w http.ResponseWriter, r *http.Request) {
 	c := catPicAndQuote{CatPic: string(catPicURL()), Quote: "placeholder"}
 	t, _ := template.ParseFiles("catQuote.html")
@@ -50,11 +56,10 @@ func extractHTMLbody(url string) []byte {
 }
 
 func catPicURL() []byte {
-	body := extractHTMLbody(APIurl)
-	startIndex := bytes.Index(body, []byte("http"))
-	endIndex := bytes.Index(body, []byte(".jpg")) + 4 // +4 to get index of g
+	var catPicAPI []CatPicAPI
+	json.Unmarshal(extractHTMLbody(CatPicAPI_URL), &catPicAPI)
 
-	return body[startIndex:endIndex]
+	return []byte(catPicAPI[0].URL)
 }
 
 func main() {
