@@ -16,9 +16,8 @@ type CatPicAndQuote struct {
 }
 
 func catQuoteHandler(w http.ResponseWriter, r *http.Request) {
-	var quote QuoteAPI
-	json.Unmarshal(extractHTMLbody(QuoteAPI_URL), &quote)
-	c := CatPicAndQuote{CatPic: string(catPicURL()), Quote: "\"" + quote.Content + "\"" + " ~ " + quote.Author}
+
+	c := CatPicAndQuote{CatPic: catPicURL(), Quote: quote()}
 	t, _ := template.ParseFiles("catQuote.html")
 	t.Execute(w, c)
 }

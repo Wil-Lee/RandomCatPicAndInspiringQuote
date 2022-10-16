@@ -13,9 +13,9 @@ type CatPicAPI struct {
 	Height int    `json:"height"`
 }
 
-func catPicURL() []byte {
+func catPicURL() string {
 	var catPicAPI []CatPicAPI
 	json.Unmarshal(extractHTMLbody(CatPicAPI_URL), &catPicAPI)
 
-	return []byte(catPicAPI[0].URL)
+	return catPicAPI[0].URL
 }
