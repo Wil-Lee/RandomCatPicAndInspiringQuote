@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -10,16 +9,15 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type CatPicAndQuote struct {
-	CatPic string
-	Quote  string
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+
+	c := CatPicAndQuote{CatPic: randomCatPicURL(), Quote: randomQuote()}
+	t, _ := template.ParseFiles("index.html")
+	t.Execute(w, c)
 }
 
-func catQuoteHandler(w http.ResponseWriter, r *http.Request) {
-
-	c := CatPicAndQuote{CatPic: catPicURL(), Quote: quote()}
-	t, _ := template.ParseFiles("catQuote.html")
-	t.Execute(w, c)
+func buildComboID(catPicID string, quoteID string) string {
+	return catPicID + comboSeparator + quoteID
 }
 
 func main() {
@@ -36,6 +34,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", catQuoteHandler)
+	mux.HandleFunc("/", indexHandler)
+	mux.HandleFunc(comboPath, comboHandler)
 	http.ListenAndServe(":"+port, mux)
 }
