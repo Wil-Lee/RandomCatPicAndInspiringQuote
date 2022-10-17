@@ -9,15 +9,19 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-
-	c := CatPicAndQuote{CatPic: randomCatPicURL(), Quote: randomQuote()}
-	t, _ := template.ParseFiles("index.html")
-	t.Execute(w, c)
+type ComboLinkCatPicQuote struct {
+	CatQuote  CatPicAndQuote
+	ComboLink string
 }
 
-func buildComboID(catPicID string, quoteID string) string {
-	return catPicID + comboSeparator + quoteID
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+
+	cQuote := CatPicAndQuote{CatPic: randomCatPicURL(), Quote: randomQuote()}
+	var comboLink string = r.Host + buildComboPath()
+	ComboLinkAndCatPicQuote := ComboLinkCatPicQuote{CatQuote: cQuote, ComboLink: comboLink}
+
+	t, _ := template.ParseFiles("index.html")
+	t.Execute(w, ComboLinkAndCatPicQuote)
 }
 
 func main() {

@@ -6,6 +6,7 @@ import (
 
 var catPicAPI_URL string = "https://api.thecatapi.com/v1/images/search"
 var catPicAPI_URL_byID string = "https://api.thecatapi.com/v1/images/"
+var currentCatPicID string
 
 type CatPicAPI struct {
 	ID     string `json:"id"`
@@ -17,6 +18,7 @@ type CatPicAPI struct {
 func randomCatPicURL() string {
 	var catPicAPI []CatPicAPI
 	json.Unmarshal(extractHTMLbody(catPicAPI_URL), &catPicAPI)
+	currentCatPicID = catPicAPI[0].ID
 
 	return catPicAPI[0].URL
 }

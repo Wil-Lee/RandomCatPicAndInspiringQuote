@@ -23,3 +23,7 @@ func comboHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("catAndQuote.html")
 	t.Execute(w, c)
 }
+
+func buildComboPath() string {
+	return comboPath + currentCatPicID + comboSeparator + currentQuoteID
+}

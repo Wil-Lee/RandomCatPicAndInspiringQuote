@@ -8,10 +8,9 @@
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-  <img src={{ .CatPic}}>
-  <h1>{{ .Quote}}</h1>
-  <a href={{ .Combo}}>
-    <button>share combination</button>
-  </a>
+  <img src={{ .CatQuote.CatPic}}>
+  <h1>{{ .CatQuote.Quote}}</h1>
+  <h2>Link to this combo: </h2>
+  <h3>{{ .ComboLink}}</h3>
 </body>
 </html>

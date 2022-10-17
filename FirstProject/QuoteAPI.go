@@ -6,6 +6,7 @@ import (
 
 var quoteAPI_URL string = "https://api.quotable.io/random"
 var quoteAPI_URL_byID string = "https://api.quotable.io/quotes/"
+var currentQuoteID string
 
 type QuoteAPI struct {
 	ID           string `json:"_id"`
@@ -28,6 +29,6 @@ func quoteByID(id string) string {
 func extractQuote(url string) string {
 	var quote QuoteAPI
 	json.Unmarshal(extractHTMLbody(url), &quote)
-
+	currentQuoteID = quote.ID
 	return "\"" + quote.Content + "\"" + " ~ " + quote.Author
 }
