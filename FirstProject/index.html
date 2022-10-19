@@ -10,7 +10,103 @@
 <body>
   <img src={{ .CatQuote.CatPic}}>
   <h1>{{ .CatQuote.Quote}}</h1>
-  <h2>Link to this combo: </h2>
-  <h3>{{ .ComboLink}}</h3>
+  <p>Link to this combo: </p>
+  <h2 id="comboLink">{{ .ComboLink}}</h2>
+  
+
+  <div id="cookies">
+    <div class="cookies">
+      <button id="cookies-btn">save combo as cookie</button>
+    </div>
+  </div>
+
 </body>
 </html>
+
+
+
+<script>
+
+  const maxComboCookieAmount = 10
+  const ComboCookieBaseName = "combo"
+
+
+    setCookie = (cName, cValue, expDays) => {
+      let date = new Date();
+      date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
+      const expires = "expires=" + date.toUTCString();
+      document.cookie = cName + "=" + cValue + ", " + expires + ", path=/";
+    }
+
+    setComboCookie = () => {
+      const comboLink = document.getElementById('comboLink').firstChild.data
+      if (isComboSafed(comboLink)) {
+        alert("Combo already safed.");
+        return;
+      }
+      let comboCookieNumber = getFreeComboNumber();
+      if( comboCookieNumber != null) {
+        cookieComboName = ComboCookieBaseName + comboCookieNumber;
+      } else {
+        alert("Max amount of combos are saved. Delete at least one to store another.");
+        return;
+      }
+      setCookie(cookieComboName, comboLink, 30);
+      alert("Combo saved.")
+    }
+
+    document.querySelector("#cookies-btn").addEventListener("click", () => {
+      document.querySelector("#cookies");
+      setComboCookie();
+    })
+
+    function isComboSafed(combo) {
+      const cookies = getCookies()
+      for (i = 0; i < cookies.length; i++) {
+        if (cookies[i].split(',')[0].split('=')[1] == combo) return true;
+      }
+      return false;
+    } 
+
+    //returns a valid combo number or null if max amount of saved combos is achieved
+    getFreeComboNumber = () => {
+      const cookies = getCookies();
+      // if no cookies are saved
+      if (cookies == '') {
+        return 1;
+      }
+
+      //extract all combo cookies
+      const comboCookies  = new Array(maxComboCookieAmount);
+      for (i = 0; i < cookies.length; i++) {
+        if (cookies[i].startsWith(ComboCookieBaseName)) comboCookies[i] = cookies[i];
+      }
+
+      comboCookies.sort(comboCookiesComparator);
+     
+      for (i = 1; i <= comboCookies.length; i++) {
+        if (comboCookies[i - 1] == null) return i;
+        if (!comboCookies[i - 1].startsWith(ComboCookieBaseName+i)) return i;
+      }
+    }
+
+    const comboCookiesComparator = (first, second) => {
+      let firstCCNumber = parseInt(first.substring(ComboCookieBaseName.length, first.indexOf("=")));
+      let secondCCNumber = parseInt(second.substring(ComboCookieBaseName.length, second.indexOf("=")));
+      
+      if (firstCCNumber < secondCCNumber) return -1;
+      if (firstCCNumber > secondCCNumber) return 1;
+      return 0;
+    }
+
+    //trimms the space symbol of all cookies with greater index than 0 and returns array of cookies
+    function getCookies() {
+      const cookies = document.cookie.split(';');
+
+      //trimm the space symbol of all cookies with greater index than 0
+      for (i = 0; i < cookies.length; i++) {
+        if (cookies[i].startsWith(" ")) cookies[i] = cookies[i].substring(1);
+      }
+      return cookies;
+    }
+</script>
