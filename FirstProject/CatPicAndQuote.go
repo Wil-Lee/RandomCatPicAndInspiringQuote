@@ -40,5 +40,6 @@ func main() {
 
 	mux.HandleFunc("/", indexHandler)
 	mux.HandleFunc(comboPath, comboHandler)
+	mux.HandleFunc(savedCombosPath, savedCombosHandler)
 	http.ListenAndServe(":"+port, mux)
 }

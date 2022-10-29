@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title></title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+    <h1>Locally saved combos:</h1>
+    {{range $index, $element := .Cookies}}
+    <div style="display: inline-block;">
+        <li id="cookieComboLink{{$index}}">{{$element.Value}}
+            <div style="display: inline-block;" id="cookies">
+                <div style="display: inline-block;" class="test">
+                    <button id="deleteComboCookie" onclick="deleteComboCookie('{{$element.Value}}')">Delete Combo</button> <button id="saveCookieCombo">Save Combo</button>
+                </div>
+            </div>
+        </li>{{end}}
+    </div>
+   
+    <h1>Saved combos on this account:</h1>
+    {{range .User.ComboLinks.ComboLinks}}
+    <div style="display: inline-block;">
+        <li>{{.}}
+            <div style="display: inline-block;" id="cookies">
+                <div style="display: inline-block;" class="test">
+                    <button id="deleteAccountCombo">Delete Combo</button>
+                </div>
+            </div>
+        </li>{{end}}
+    </div>
+
+</body>
+</html>
+
+<script>
+
+    function deleteComboCookie(comboLink) {
+        const cookies = getCookies()
+        for (i = 0; i < cookies.length; i++) {
+            
+            if (extractComboLinkFromCookie(cookies[i]) == comboLink) {
+                let test = cookies[i].split('=')[0] + "= ; expires = Thu, 01 Jan 1970 00:00:00 GMT; path=/"
+                document.cookie = cookies[i].split('=')[0] + "= ; expires = Thu, 01 Jan 1970 00:00:00 GMT; path=/"
+                location.reload()
+                return
+            }
+        }
+        alert("Error: Cookie was not found.")
+    }
+
+    function extractComboLinkFromCookie(comboCookie) {
+        return comboCookie.split('=')[1].split(',')[0]
+    }
+
+    //trimms the space symbol at the beginning of all cookies with greater index than 0 and returns array of cookies
+    function getCookies() {
+      const cookies = document.cookie.split(';')
+      for (i = 0; i < cookies.length; i++) {
+        if (cookies[i].startsWith(" ")) cookies[i] = cookies[i].substring(1)
+      }
+      return cookies
+    }
+
+</script>
