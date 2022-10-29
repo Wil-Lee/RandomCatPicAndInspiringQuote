@@ -60,6 +60,7 @@ func getComboLinks() []string {
 }
 
 // hier aufgehört: Über func map sollen Go-Funktionen im HTML Template aufgerufen werden können (hier um Kombos in die db zu laden)
+// testuser soll noch durch 'current user' (der den aktuell angemeldeten User darstellt) ersetzt werden
 func savedCombosHandler(w http.ResponseWriter, r *http.Request) {
 	user := testBentutzer()
 	cookies := r.Cookies()
