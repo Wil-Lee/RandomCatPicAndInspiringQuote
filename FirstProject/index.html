@@ -35,7 +35,7 @@
       let date = new Date();
       date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
       const expires = "expires=" + date.toUTCString();
-      document.cookie = cName + "=" + cValue + ", " + expires + ", path=/";
+      document.cookie = cName + "=" + cValue + "; " + expires + "; path=/";
     }
 
     setComboCookie = () => {
@@ -45,7 +45,7 @@
         return;
       }
       let comboCookieNumber = getFreeComboNumber();
-      if( comboCookieNumber != null) {
+      if (comboCookieNumber != null) {
         cookieComboName = ComboCookieBaseName + comboCookieNumber;
       } else {
         alert("Max amount of combos are saved. Delete at least one to store another.");
@@ -76,18 +76,22 @@
         return 1;
       }
 
-      //extract all combo cookies
-      const comboCookies  = new Array(maxComboCookieAmount);
-      for (i = 0; i < cookies.length; i++) {
-        if (cookies[i].startsWith(ComboCookieBaseName)) comboCookies[i] = cookies[i];
-      }
-
+      const comboCookies  = extractComboCookies(cookies);
       comboCookies.sort(comboCookiesComparator);
      
       for (i = 1; i <= comboCookies.length; i++) {
         if (comboCookies[i - 1] == null) return i;
         if (!comboCookies[i - 1].startsWith(ComboCookieBaseName+i)) return i;
       }
+    }
+
+    //extract all combo cookies from genral cookies
+    function extractComboCookies(cookies) {
+      const comboCookies  = new Array(maxComboCookieAmount);
+      for (i = 0; i < cookies.length; i++) {
+        if (cookies[i].startsWith(ComboCookieBaseName)) comboCookies[i] = cookies[i];
+      }
+      return comboCookies;
     }
 
     const comboCookiesComparator = (first, second) => {
@@ -99,14 +103,13 @@
       return 0;
     }
 
-    //trimms the space symbol of all cookies with greater index than 0 and returns array of cookies
+    //trimms the space symbol at the beginning of all cookies with greater index than 0 and returns array of cookies
     function getCookies() {
       const cookies = document.cookie.split(';');
-
-      //trimm the space symbol of all cookies with greater index than 0
       for (i = 0; i < cookies.length; i++) {
         if (cookies[i].startsWith(" ")) cookies[i] = cookies[i].substring(1);
       }
       return cookies;
     }
+
 </script>
